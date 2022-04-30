@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "users": {
+      ".read": true,
+      "$uid": {
+        ".write": "auth.uid === $uid"
+      }
+    },
+    "med_intake": {
+      "$email": {
+          ".read": "auth.uid === $uid",
+          ".write": "auth.uid === $uid"
+      }
+    }
+  }
+}

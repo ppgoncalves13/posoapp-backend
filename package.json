@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "bull": "^4.8.2",
+    "fcm-node": "^1.6.1",
+    "firebase-admin": "^10.1.0"
+  }
+}
