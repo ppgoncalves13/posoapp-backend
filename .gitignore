@@ -136,4 +136,4 @@ dist
 .runtimeconfig.json
 .firebase/
 
-serviceAccountKey.json
+.env
