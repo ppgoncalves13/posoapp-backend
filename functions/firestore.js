@@ -2,7 +2,6 @@ const { initializeApp, cert, applicationDefault  } = require('firebase-admin/app
 const { getFirestore } = require('firebase-admin/firestore');
 const { getMessaging } = require('firebase-admin/messaging');
 
-const serviceAccount = require("../serviceAccount.json") 
 require('dotenv').config()
 
 const app_data = {
