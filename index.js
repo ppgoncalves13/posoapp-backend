@@ -11,5 +11,5 @@ http.createServer(function (request, response) {
 // Repeat Queue every 2 mins
 console.log("Start notifications Queue...")
 
-const job = schedule.scheduleJob('*/1 * * * *', async () => await getNotifications());
+const job = schedule.scheduleJob('*/2 * * * *', async () => await getNotifications());
 
