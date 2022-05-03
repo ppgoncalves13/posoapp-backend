@@ -12,7 +12,7 @@ getNotifications = async () => {
     users_snapshot.forEach(user => {
         let user_data = user.data()
 
-        const reg_token = user_data.registration_token
+        const reg_token = user_data.reg_token
 
         users.push({ "token": reg_token, "email": user.id })
     });
