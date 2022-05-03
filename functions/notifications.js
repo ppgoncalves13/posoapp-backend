@@ -55,7 +55,7 @@ getNotifications = async () => {
 _formatTime = (time) => {
     const date = new Date(time)
 
-    return `${date.getHours()}:${date.getMinutes()}`
+    return `${date.getHours() + 1}:${date.getMinutes()}`
 }
 
 _formatDate = (date) => {
