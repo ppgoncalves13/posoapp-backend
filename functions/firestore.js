@@ -7,7 +7,9 @@ require('dotenv').config()
 const app_data = {
   credential: cert({
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY
+    ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/gm, "\n")
+    : undefined,
     projectId: process.env.FIREBASE_PROJECT_ID,
   }),
   databaseURL: process.env.FIREBASE_DATABASE_URL,
