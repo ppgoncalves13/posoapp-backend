@@ -137,3 +137,4 @@ dist
 .firebase/
 
 .env
+serviceAccount.json

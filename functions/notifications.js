@@ -1,50 +1,66 @@
 const db = require("./firestore.js").db
 const messaging = require("./firestore.js").messaging
-const Queue = require('bull')
 
-const notificationsQueue = new Queue("notifications");
+getNotifications = async () => {
+    console.log("Start notifications process...")
+    const users_ref = db.collection('med_intake')
+    const users_snapshot = await users_ref.get();
 
-notificationsQueue.process( (job) => {
+    const users = []
+    const date = new Date()
 
-    let users = db.collection('med_intake').get();
+    users_snapshot.forEach(user => {
+        let user_data = user.data()
 
-    for (let user in users) {
-        const date = new Date()
+        const reg_token = user_data.registration_token
 
-        const reg_token = user.data().registration_token
+        users.push({ "token": reg_token, "email": user.id })
+    });
 
-        const future_intakes = db.doc(user).collection(_formatDate(date)).where('time', '>', date.getTime()).get()
+    let intakes = []
 
-        for (let intake of future_intakes) {
-            const now = new Date().getTime()
-            const in_5_minutes = now + 300000
+    for (let user of users) {
+        const intakes_ref = db.collection('med_intake').doc(user.email).collection(_formatDate(date))
+        const intakes_snapshot = await intakes_ref.get()
 
-            if (intake.time <= in_5_minutes) { 
-
-                const message = { 
-                    notification: {
-                        title: intake.med_name,
-                        body: `Tomar medicamento : ${_formatTime(intake.time)}`
-                    }
-                }
-
-                messaging.sendToDevice(reg_token, message)
-            }
-            
-        }
-
+        intakes_snapshot.forEach(intake => {
+            intake_data = intake.data()
+            intakes.push({
+                "token": user.token,
+                ...intake_data
+            })
+        })
     }
-});
+
+    console.log(`# of intakes ${intakes.length}`)
+
+    for (let intake of intakes) {
+        const now = new Date().getTime()
+        const in_5_minutes = now + 300000
+
+        if (intake.time > now && intake.time <= in_5_minutes) {
+
+            const message = {
+                notification: {
+                    title: intake.med_name,
+                    body: `Tomar medicamento : ${_formatTime(intake.time)}`
+                }
+            }
+
+            messaging.sendToDevice(intake.token, message)
+        }
+    }
+}
 
 _formatTime = (time) => {
     const date = new Date(time)
 
     return `${date.getHours()}:${date.getMinutes()}`
-} 
+}
 
 _formatDate = (date) => {
-    let month = date.getMonth()+1;
-    let day = date.getDay()
+    let month = date.getMonth() + 1;
+    let day = date.getDay() + 1;
 
     if (month < 10) {
         month = `0${month}`
@@ -57,4 +73,4 @@ _formatDate = (date) => {
     return `${day}-${month}-${date.getFullYear()}`
 }
 
-module.exports = notificationsQueue
+module.exports = getNotifications
